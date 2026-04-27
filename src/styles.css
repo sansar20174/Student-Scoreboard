@@ -1,0 +1,46 @@
+/* 💼 Professional Dashboard */
+
+body {
+  background: #f1f5f9;
+  font-family: 'Inter', sans-serif;
+  color: #1e293b;
+}
+
+.app-container {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.header h1 {
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.search-input {
+  border: 1px solid #cbd5f5;
+  border-radius: 8px;
+}
+
+.student-table th {
+  background: #f8fafc;
+  font-weight: 600;
+}
+
+.student-table tr:hover {
+  background: #f1f5f9;
+}
+
+.status-pass {
+  color: #16a34a;
+}
+
+.status-fail {
+  color: #dc2626;
+}
+
+.add-student-form button {
+  background: #2563eb;
+  border-radius: 8px;
+}
