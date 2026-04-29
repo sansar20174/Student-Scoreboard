@@ -11,11 +11,25 @@ function StudentTable({ students, onScoreChange, onDelete, onSort, sortConfig })
     <table className="student-table">
       <thead>
         <tr>
-          <th onClick={() => onSort("name")} className="sortable">
-            Name {getSortIcon("name")}
+          <th>
+            <button
+              type="button"
+              onClick={() => onSort("name")}
+              className="sortable-button"
+            >
+              <span>Name</span>
+              <span aria-hidden="true">{getSortIcon("name")}</span>
+            </button>
           </th>
-          <th onClick={() => onSort("score")} className="sortable">
-            Score {getSortIcon("score")}
+          <th>
+            <button
+              type="button"
+              onClick={() => onSort("score")}
+              className="sortable-button"
+            >
+              <span>Score</span>
+              <span aria-hidden="true">{getSortIcon("score")}</span>
+            </button>
           </th>
           <th>Status</th>
           <th>Actions</th>
@@ -33,8 +47,8 @@ function StudentTable({ students, onScoreChange, onDelete, onSort, sortConfig })
           ))
         ) : (
           <tr>
-            <td colSpan="4" style={{ textAlign: "center", padding: "2rem" }}>
-              No students found.
+            <td colSpan="4" className="empty-state">
+              No students found. Try another search or add a new student.
             </td>
           </tr>
         )}

@@ -20,7 +20,7 @@ const StudentRow = React.memo(({ student, onScoreChange, onDelete }) => {
   };
 
   return (
-    <tr>
+    <tr className="student-row">
       <td>{name}</td>
       <td>
         <input
@@ -34,7 +34,7 @@ const StudentRow = React.memo(({ student, onScoreChange, onDelete }) => {
       </td>
       <td className={statusClass}>{status}</td>
       <td>
-        <button className="btn-delete" onClick={() => onDelete(id)}>
+        <button type="button" className="btn-delete" onClick={() => onDelete(id)}>
           Delete
         </button>
       </td>

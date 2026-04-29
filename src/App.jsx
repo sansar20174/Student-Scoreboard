@@ -8,7 +8,12 @@ function App() {
   const [students, setStudents] = useState([
     { id: 1, name: "Alice", score: 75 },
     { id: 2, name: "Bob", score: 35 },
-    { id: 3, name: "Charlie", score: 50 },
+    { id: 4, name: "Diana", score: 88 },
+    { id: 6, name: "Fiona", score: 67 },
+    { id: 7, name: "George", score: 34 },
+    { id: 8, name: "Hannah", score: 79 },
+    { id: 9, name: "Ibrahim", score: 14 },
+    { id: 10, name: "Jasmine", score: 99 },
   ]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({ key: "id", direction: "asc" });
@@ -66,6 +71,25 @@ function App() {
     return result;
   }, [students, searchTerm, sortConfig]);
 
+  const statistics = useMemo(() => {
+    const total = filteredAndSortedStudents.length;
+    const scoreValues = filteredAndSortedStudents.map((student) => student.score);
+    const scoreSum = scoreValues.reduce((sum, score) => sum + score, 0);
+    const average = total ? Math.round((scoreSum / total) * 100) / 100 : 0;
+    const highest = total ? Math.max(...scoreValues) : 0;
+    const lowest = total ? Math.min(...scoreValues) : 0;
+
+    return {
+      total,
+      average,
+      highest,
+      lowest,
+      averageLabel: total ? average.toFixed(2) : "0.00",
+      highestLabel: total ? String(highest) : "—",
+      lowestLabel: total ? String(lowest) : "—",
+    };
+  }, [filteredAndSortedStudents]);
+
   return (
     <div className="app-container">
       <Header title="Student Scoreboard" />
@@ -78,6 +102,34 @@ function App() {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
+
+      <section className="hero-panel">
+        <div className="hero-copy">
+          <h2>Score summary</h2>
+          <p>
+            View overall performance metrics for the current student list, including average, highest, and lowest scores.
+          </p>
+        </div>
+        <div className="metrics-grid">
+          <div className="metric-card metric-card-primary">
+            <div className="metric-label">Total students</div>
+            <strong>{statistics.total}</strong>
+          </div>
+          <div className="metric-card metric-card-primary">
+            <div className="metric-label">Average score</div>
+            <strong>{statistics.averageLabel}</strong>
+          </div>
+          <div className="metric-card metric-card-pass">
+            <div className="metric-label">Highest score</div>
+            <strong>{statistics.highestLabel}</strong>
+          </div>
+          <div className="metric-card metric-card-fail">
+            <div className="metric-label">Lowest score</div>
+            <strong>{statistics.lowestLabel}</strong>
+          </div>
+        </div>
+      </section>
+
       <StudentTable
         students={filteredAndSortedStudents}
         onScoreChange={updateScore}
