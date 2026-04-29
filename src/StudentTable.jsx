@@ -36,7 +36,7 @@ function StudentTable({ students, onScoreChange, onDelete, onSort, sortConfig })
         </tr>
       </thead>
       <tbody>
-        {students.length > 0 ? (
+        {students.length ? (
           students.map((student) => (
             <StudentRow
               key={student.id}

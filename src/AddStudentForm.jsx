@@ -8,19 +8,21 @@ function AddStudentForm({ onAdd }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!name.trim()) {
+    const trimmedName = name.trim();
+
+    if (!trimmedName) {
       setError("Please enter a student name.");
       return;
     }
 
-    const numScore = Number(score);
-    if (isNaN(numScore) || numScore < 0 || numScore > 100) {
+    const numericScore = Number(score);
+    if (isNaN(numericScore) || numericScore < 0 || numericScore > 100) {
       setError("Score must be between 0 and 100.");
       return;
     }
 
     setError("");
-    onAdd(name.trim(), numScore);
+    onAdd(trimmedName, numericScore);
     setName("");
     setScore("");
   };

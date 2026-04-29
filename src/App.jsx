@@ -15,69 +15,68 @@ function App() {
     { id: 9, name: "Ibrahim", score: 14 },
     { id: 10, name: "Jasmine", score: 99 },
   ]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortConfig, setSortConfig] = useState({ key: "id", direction: "asc" });
+  const [searchText, setSearchText] = useState("");
+  const [sortBy, setSortBy] = useState({ key: "id", direction: "asc" });
 
   const addStudent = (name, score) => {
-    const newStudent = {
+    const nextStudent = {
       id: Date.now(),
       name,
       score: Number(score),
     };
-    setStudents((prev) => [...prev, newStudent]);
+    setStudents((list) => [...list, nextStudent]);
   };
 
   const updateScore = (id, newScore) => {
-    // Basic validation: ensure score is between 0 and 100
-    const validatedScore = Math.max(0, Math.min(100, Number(newScore)));
-    setStudents((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, score: validatedScore } : s))
+    // Keep scores inside the allowed range.
+    const safeScore = Math.max(0, Math.min(100, Number(newScore)));
+    setStudents((list) =>
+      list.map((student) =>
+        student.id === id ? { ...student, score: safeScore } : student
+      )
     );
   };
 
   const deleteStudent = (id) => {
-    setStudents((prev) => prev.filter((s) => s.id !== id));
+    setStudents((list) => list.filter((student) => student.id !== id));
   };
 
   const handleSort = (key) => {
-    let direction = "asc";
-    if (sortConfig.key === key && sortConfig.direction === "asc") {
-      direction = "desc";
-    }
-    setSortConfig({ key, direction });
+    const direction =
+      sortBy.key === key && sortBy.direction === "asc" ? "desc" : "asc";
+    setSortBy({ key, direction });
   };
 
-  const filteredAndSortedStudents = useMemo(() => {
-    let result = [...students];
+  const visibleStudents = useMemo(() => {
+    let list = [...students];
 
-    // Filter
-    if (searchTerm) {
-      result = result.filter((s) =>
-        s.name.toLowerCase().includes(searchTerm.toLowerCase())
+    if (searchText) {
+      const query = searchText.toLowerCase();
+      list = list.filter((student) =>
+        student.name.toLowerCase().includes(query)
       );
     }
 
-    // Sort
-    result.sort((a, b) => {
-      if (a[sortConfig.key] < b[sortConfig.key]) {
-        return sortConfig.direction === "asc" ? -1 : 1;
+    list.sort((left, right) => {
+      if (left[sortBy.key] < right[sortBy.key]) {
+        return sortBy.direction === "asc" ? -1 : 1;
       }
-      if (a[sortConfig.key] > b[sortConfig.key]) {
-        return sortConfig.direction === "asc" ? 1 : -1;
+      if (left[sortBy.key] > right[sortBy.key]) {
+        return sortBy.direction === "asc" ? 1 : -1;
       }
       return 0;
     });
 
-    return result;
-  }, [students, searchTerm, sortConfig]);
+    return list;
+  }, [students, searchText, sortBy]);
 
-  const statistics = useMemo(() => {
-    const total = filteredAndSortedStudents.length;
-    const scoreValues = filteredAndSortedStudents.map((student) => student.score);
-    const scoreSum = scoreValues.reduce((sum, score) => sum + score, 0);
-    const average = total ? Math.round((scoreSum / total) * 100) / 100 : 0;
-    const highest = total ? Math.max(...scoreValues) : 0;
-    const lowest = total ? Math.min(...scoreValues) : 0;
+  const stats = useMemo(() => {
+    const total = visibleStudents.length;
+    const scores = visibleStudents.map((student) => student.score);
+    const sum = scores.reduce((runningTotal, score) => runningTotal + score, 0);
+    const average = total ? Math.round((sum / total) * 100) / 100 : 0;
+    const highest = total ? Math.max(...scores) : 0;
+    const lowest = total ? Math.min(...scores) : 0;
 
     return {
       total,
@@ -88,7 +87,7 @@ function App() {
       highestLabel: total ? String(highest) : "—",
       lowestLabel: total ? String(lowest) : "—",
     };
-  }, [filteredAndSortedStudents]);
+  }, [visibleStudents]);
 
   return (
     <div className="app-container">
@@ -98,8 +97,8 @@ function App() {
           type="text"
           placeholder="Search students by name..."
           className="search-input"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
         />
       </div>
 
@@ -113,29 +112,29 @@ function App() {
         <div className="metrics-grid">
           <div className="metric-card metric-card-primary">
             <div className="metric-label">Total students</div>
-            <strong>{statistics.total}</strong>
+            <strong>{stats.total}</strong>
           </div>
           <div className="metric-card metric-card-primary">
             <div className="metric-label">Average score</div>
-            <strong>{statistics.averageLabel}</strong>
+            <strong>{stats.averageLabel}</strong>
           </div>
           <div className="metric-card metric-card-pass">
             <div className="metric-label">Highest score</div>
-            <strong>{statistics.highestLabel}</strong>
+            <strong>{stats.highestLabel}</strong>
           </div>
           <div className="metric-card metric-card-fail">
             <div className="metric-label">Lowest score</div>
-            <strong>{statistics.lowestLabel}</strong>
+            <strong>{stats.lowestLabel}</strong>
           </div>
         </div>
       </section>
 
       <StudentTable
-        students={filteredAndSortedStudents}
+        students={visibleStudents}
         onScoreChange={updateScore}
         onDelete={deleteStudent}
         onSort={handleSort}
-        sortConfig={sortConfig}
+        sortConfig={sortBy}
       />
       <AddStudentForm onAdd={addStudent} />
     </div>

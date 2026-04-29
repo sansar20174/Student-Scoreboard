@@ -2,20 +2,22 @@ import React from "react";
 
 const StudentRow = React.memo(({ student, onScoreChange, onDelete }) => {
   const { id, name, score } = student;
-  const status = score >= 40 ? "Pass" : "Fail";
-  const statusClass = score >= 40 ? "status-pass" : "status-fail";
+  const isPassing = score >= 40;
+  const status = isPassing ? "Pass" : "Fail";
+  const statusClass = isPassing ? "status-pass" : "status-fail";
 
   const handleChange = (e) => {
     const value = e.target.value;
-    // Empty string check allows user to delete the number to type a new one
+
+    // Let the field clear briefly while the user edits the score.
     if (value === "") {
       onScoreChange(id, 0);
       return;
     }
-    
-    const newScore = Number(value);
-    if (!isNaN(newScore)) {
-      onScoreChange(id, newScore);
+
+    const nextScore = Number(value);
+    if (!isNaN(nextScore)) {
+      onScoreChange(id, nextScore);
     }
   };
 
